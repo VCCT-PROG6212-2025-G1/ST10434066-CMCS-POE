@@ -1,0 +1,57 @@
+﻿@model IEnumerable<CMCS.Models.Claim>
+@{
+    ViewData["Title"] = "Pending Approvals";
+}
+<h2>Pending Claims</h2>
+<table class="table table-bordered table-sm align-middle">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Lecturer</th>
+            <th>Month</th>
+            <th>Year</th>
+            <th>Hours</th>
+            <th>Rate</th>
+            <th>Amount</th>
+            <th>Docs</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.ClaimID</td>
+                <td>@c.Lecturer?.FullName</td>
+                <td>@c.Month</td>
+                <td>@c.Year</td>
+                <td>@c.HoursWorked</td>
+                <td>@c.HourlyRate</td>
+                <td>@c.Amount</td>
+                <td>
+                    @if (c.Documents?.Any() == true)
+                    {
+                        <ul class="mb-0">
+                            @foreach (var d in c.Documents)
+                            {
+                                <li><a href="@d.FileUrl" target="_blank">@d.FileName</a></li>
+                            }
+                        </ul>
+                    }
+                </td>
+                <td>
+                    <form asp-action="Decide" asp-controller="Approvals" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@c.ClaimID" />
+                        <input type="hidden" name="decision" value="Approve" />
+                        <button class="btn btn-success btn-sm">Approve</button>
+                    </form>
+                    <form asp-action="Decide" asp-controller="Approvals" method="post" class="d-inline ms-1">
+                        <input type="hidden" name="id" value="@c.ClaimID" />
+                        <input type="hidden" name="decision" value="Reject" />
+                        <button class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

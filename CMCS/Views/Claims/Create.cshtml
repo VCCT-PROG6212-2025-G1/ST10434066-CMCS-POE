@@ -1,0 +1,111 @@
+﻿@model CMCS.Models.Claim
+@{
+    ViewData["Title"] = "Submit a Claim";
+    var lecturers = ViewBag.Lecturers as List<CMCS.Models.Lecturer> ?? new();
+    var currentYear = DateTime.UtcNow.Year;
+}
+<h2 class="mb-3">Submit Claim</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="row g-3">
+    @Html.AntiForgeryToken()
+
+    <div class="col-12">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </div>
+
+    <div class="col-md-5">
+        <label class="form-label">Lecturer</label>
+        <select name="LecturerID" id="LecturerID" class="form-select" required>
+            <option value="">-- Select Lecturer --</option>
+            @foreach (var l in lecturers)
+            {
+                <option value="@l.LecturerID" data-rate="@l.HourlyRate">@l.FullName (@l.StaffNo)</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Month</label>
+        <select asp-for="Month" class="form-select" required>
+            <option value="">--</option>
+            @for (var m = 1; m <= 12; m++)
+            {
+                <option value="@m">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)</option>
+            }
+        </select>
+        <span asp-validation-for="Month" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-2">
+        <label class="form-label">Year</label>
+        <select asp-for="Year" class="form-select" required>
+            <option value="">--</option>
+            @for (var y = currentYear - 1; y <= currentYear + 1; y++)
+            {
+                <option value="@y">@y</option>
+            }
+        </select>
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Hours Worked</label>
+        <input asp-for="HoursWorked" class="form-control" type="number" step="0.25" min="0.25" placeholder="e.g. 12.5" required />
+        <span asp-validation-for="HoursWorked" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Notes</label>
+        <textarea asp-for="Notes" class="form-control" rows="2" maxlength="500" placeholder="Any extra info..."></textarea>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Hourly Rate (preview)</label>
+        <input id="RatePreview" class="form-control" type="text" readonly />
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Amount (preview)</label>
+        <input id="AmountPreview" class="form-control" type="text" readonly />
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Upload Supporting Document (.pdf/.docx/.xlsx)</label>
+        <input type="file" name="upload" class="form-control" accept=".pdf,.docx,.xlsx" />
+        @if (TempData["UploadError"] != null)
+        {
+            <div class="text-danger small mt-1">@TempData["UploadError"]</div>
+        }
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a href="/" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const lecturerDropdown = document.getElementById("LecturerID");
+      const hoursWorkedInput = document.getElementById("HoursWorked");
+      const rateField = document.getElementById("RatePreview");
+      const amountField = document.getElementById("AmountPreview");
+
+      function toMoney(n) {
+        const x = Number(n);
+        return Number.isNaN(x) ? "" : x.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+
+      function updatePreview() {
+        const selected = lecturerDropdown.options[lecturerDropdown.selectedIndex];
+        const rate = selected ? parseFloat(selected.getAttribute("data-rate")) || 0 : 0;
+        const hours = parseFloat(hoursWorkedInput.value) || 0;
+        rateField.value = rate ? toMoney(rate) : "";
+        amountField.value = rate && hours ? toMoney(rate * hours) : "";
+      }
+
+      lecturerDropdown.addEventListener("change", updatePreview);
+      hoursWorkedInput.addEventListener("input", updatePreview);
+      updatePreview();
+    });
+</script>
