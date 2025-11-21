@@ -16,14 +16,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- EF Core 8 to match .NET 8 -->
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.10" />
-		<!-- REMOVE xUnit from web project for now -->
-		<!--
-    <PackageReference Include="xunit.assert" Version="2.9.3" />
-    <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
-    -->
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
 
 </Project>

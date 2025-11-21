@@ -1,17 +1,22 @@
 //==========================================================================
-/* Fay-yaad Ahmed Parker
- * ST10434066
- * PROG6212 POE 
- * GROUP 1
-*/
-
+// Fay-yaad Ahmed Parker
+// ST10434066
+// PROG6212 POE 
+// GROUP 1
 //==========================================================================
+
 using CMCS.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// MVC + API controllers
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllers(); 
+
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // InMemory DB 
 builder.Services.AddDbContext<AppDbContext>(opt =>
@@ -27,7 +32,13 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+// Swagger 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
@@ -38,12 +49,17 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession(); 
+app.UseSession();
 
+// API routing
+app.MapControllers();
+
+// MVC routing
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}"); // start at Login page
+    pattern: "{controller=Account}/{action=Login}/{id?}"); 
 
+// Seed data
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
