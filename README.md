@@ -8,38 +8,79 @@
 
 
 
-##  Overview
-This project is Part 2 of the PROG6212 Portfolio of Evidence.  
-It is a simplified **Contract Monthly Claim System (CMCS)** that allows lecturers to:
-- Submit monthly work claims with uploaded supporting documents  
-- View pending, approved, or rejected claims  
-- Process approvals or rejections through an admin page  
+## Overview
 
-The system uses an **in-memory database (EF Core)** for testing and as a prototype.
+The Contract Monthly Claim System (CMCS) is a simple ASP.NET Core MVC web app that manages monthly lecturer claims.
+It uses a role based workflow:
+		Lecturer submits claims
+		Coordinator verifies
+		Manager approves or rejects
+		HR manages users and generates reports
 
-
-
-## Key Features
-- Lecturer Claims System
-- Submission Claim Form
-- File upload  
-- Claim approval/rejection  
-- Unit testing
+The system uses an InMemory database, Sessions, LINQ, and simple micro-APIs for validation and calculations.
 
 
 
-##  Technologies Used
-- ASP.NET Core MVC (.NET 8)
-- Entity Framework Core (InMemory)
-- xUnit for unit testing
-- Visual Studio 2026 (Community Insider)
+  ## Key Features
+
+		Session based login for all user roles
+		Automated amount calculation 
+		Secure file uploads 
+		Separated workflows for Coordinator and Manager
+		HR dashboard for user creation, password resets, and hourly rate updates
+		Monthly reports grouped by lecturer
+		Cleaner layout and improved navigation
 
 
-##  Getting Started
-1. Clone the repository  
-2. Open the `CMCS.sln` file in Visual Studio  
-3. Run the application  
- 
+
+## Lecturer Feedback 
+
+Feedback: “Design could be improved.”
+UI cleaned and navigation simplified
+
+Feedback: “Coordinator and Manager must have separate views.”
+Views split and correct workflow enforced
+
+Feedback: “Large files crash the app.”
+File size validation and error messages
+
+Feedback: “Need more descriptive commits.”
+Commit messages improved
+
+
+## Seeded users
+
+HR
+	Username: HR
+	Password: HR123
+
+Manager
+	Username: manager
+	Password: manager123
+
+Coordinator
+	Username: coordinator
+	Password: coord
+
+Lecturer
+	Username: Aisha
+	Password: AishaParker
+
+
+
+## YouTube Demonstration 
+
+
+
+
+
+## How to Run
+	1.	Clone the repo
+	2.	Open in Visual Studio
+	3.	Run the app 
+	4.	Login using the details above
+
+
 
 
 
