@@ -1,6 +1,67 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="mt-4">
+    <h2>Privacy Policy</h2>
+    <p class="text-muted">
+        Last updated: @DateTime.UtcNow.ToString("yyyy-MM-dd")
+    </p>
+
+    <h4>1. Purpose of this system</h4>
+    <p>
+        The Contract Monthly Claim System (CMCS) is an academic project used to
+        demonstrate web development concepts. It is not a real employee or payroll production system.
+    </p>
+
+    <h4>2. Data Storage </h4>
+    <p>The program makes use of an in-memory database:</p>
+    <ul>
+        <li>Pre determined users and their passwords. All are fictonal and do not represent real world people..</li>
+        <li>Claim information from lecturers such as their details, hours worked and hourly rate</li>
+        <li>Claim status information (Pending, Verified, Approved and Finalised).</li>
+        <li>File Upload for supporting documents.</li>
+    </ul>
+    <p>
+        All Data is cleared and lost when the app restarts, due to the in-memory database
+    </p>
+
+    <h4>3. Sessions</h4>
+    <p>
+        The CMCS uses cookies to keep you logged in. session cookies. The cookies used stores limited information such as:
+        The user ID, full names and roles, as well as hourly rate.
+        These cookies are not used for marketing purposes
+       
+    </p>
+
+
+    <h4>4. Access</h4>
+    <p>
+        Access control is defined by user roles:
+    </p>
+    <ul>
+        <li>Lecturers can see only their own claims.</li>
+        <li>Coordinators and Managers can view and process submitted claims.</li>
+        <li>HR users can manage user accounts and view summary reports.</li>
+    </ul>
+    <p>
+        These rules are enforced in the controllers using session-based checks.
+    </p>
+
+    <h4>6. Educational use</h4>
+    <p>
+        This system was purely designed for the PROG6212 module and its POE.
+        Any and all details used were for assesment and demonstration purposes. 
+        This system is intended for educational use only.
+    </p>
+
+    <h4>7. Contact</h4>
+    <p>
+        If you have questions about this project, the
+        CMCS system, please contact the developer:
+    </p>
+    <ul>
+        <li><strong>Student:</strong> Fay-yaad Ahmed Parker (ST10434066)</li>
+        <li><strong>Module:</strong> PROG6212 – Programming 2A</li>
+    </ul>
+</div>
