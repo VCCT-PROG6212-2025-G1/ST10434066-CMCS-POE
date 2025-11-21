@@ -1,4 +1,7 @@
-﻿using CMCS.Data;
+﻿// this code defines a controller for HR functionalities in an ASP.NET Core MVC application.
+//
+
+using CMCS.Data;
 using CMCS.Models;
 using CMCS.Models.Reports;  
 using Microsoft.AspNetCore.Mvc;

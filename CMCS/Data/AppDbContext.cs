@@ -36,8 +36,8 @@ namespace CMCS.Data
             if (!db.Lecturers.Any())
             {
                 db.Lecturers.AddRange(
-                    new Lecturer { StaffNo = "L001", FirstName = "Devi", LastName = "Smith", Email = "devi@vc.edu.za", HourlyRate = 500m },
-                    new Lecturer { StaffNo = "L002", FirstName = "Aisha", LastName = "Parker", Email = "aisha@vc.edu.za", HourlyRate = 450m }
+                    new Lecturer { StaffNo = "L001", FirstName = "Aisha", LastName = "Parker", Email = "aisha@vc.edu.za", HourlyRate = 500m },
+                    new Lecturer { StaffNo = "L002", FirstName = "Fatima", LastName = "Waggie", Email = "fatima@vc.edu.za", HourlyRate = 450m }
                 );
                 db.SaveChanges();
             }
@@ -50,8 +50,8 @@ namespace CMCS.Data
                 db.UserAccounts.AddRange(
                     new UserAccount
                     {
-                        Username = "hr",
-                        Password = "hr",
+                        Username = "HR",
+                        Password = "HR123",
                         FullName = "HR Admin",
                         Role = "HR"
                     },
