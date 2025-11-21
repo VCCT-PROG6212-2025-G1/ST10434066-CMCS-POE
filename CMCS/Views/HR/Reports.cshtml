@@ -1,0 +1,68 @@
+﻿@model CMCS.Models.Reports.ClaimReportViewModel
+
+@{
+    ViewData["Title"] = "HR Reports";
+    var monthNames = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames
+        .Where(m => !string.IsNullOrEmpty(m))
+        .ToArray();
+}
+
+<h2 class="mb-3">Finalised Claims Report</h2>
+
+<form method="get" class="row g-3 mb-3">
+    <div class="col-md-3">
+        <label class="form-label">Month</label>
+        <select name="month" class="form-select">
+            @for (int i = 1; i <= 12; i++)
+            {
+                <option value="@i" selected="@(Model.Month == i ? "selected" : null)">@monthNames[i - 1]</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Year</label>
+        <input type="number" name="year" class="form-control"
+               value="@(Model.Year ?? DateTime.UtcNow.Year)" />
+    </div>
+
+    <div class="col-md-3 align-self-end">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+</form>
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-info">
+        No claims finalised.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Lecturer</th>
+                <th>Total Hours</th>
+                <th>Total Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.LecturerName</td>
+                <td>@item.TotalHours</td>
+                <td>@item.TotalAmount.ToString("F2")</td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr class="table-secondary fw-bold">
+                <td>Grand Total</td>
+                <td>@Model.GrandTotalHours</td>
+                <td>@Model.GrandTotalAmount.ToString("F2")</td>
+            </tr>
+        </tfoot>
+    </table>
+}

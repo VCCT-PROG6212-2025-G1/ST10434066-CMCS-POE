@@ -18,8 +18,28 @@ namespace CMCS.Controllers
         // Claims Create
         public IActionResult Create()
         {
-            ViewBag.Lecturers = _db.Lecturers.OrderBy(l => l.FirstName).ToList();
-            return View(new Claim { Month = DateTime.UtcNow.Month, Year = DateTime.UtcNow.Year });
+            // Only lecturers submit claims
+            if (HttpContext.Session.GetString("Role") != "Lecturer")
+                return RedirectToAction("Denied", "Account");
+
+            var lecturerId = HttpContext.Session.GetInt32("LecturerID");
+            if (lecturerId == null)
+                return RedirectToAction("Login", "Account");
+
+            var lecturer = _db.Lecturers.Find(lecturerId.Value);
+            if (lecturer == null)
+                return RedirectToAction("Login", "Account");
+
+            ViewBag.Lecturer = lecturer;
+
+            var model = new Claim
+            {
+                LecturerID = lecturer.LecturerID,
+                Month = DateTime.UtcNow.Month,
+                Year = DateTime.UtcNow.Year
+            };
+
+            return View(model);
         }
 
         // POST: /Claims/Create
@@ -27,46 +47,78 @@ namespace CMCS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Claim claim, IFormFile? upload)
         {
-            var lecturer = await _db.Lecturers.FindAsync(claim.LecturerID);
-            if (lecturer == null) ModelState.AddModelError("LecturerID", "Invalid Lecturer.");
-            if (claim.Month is < 1 or > 12) ModelState.AddModelError("Month", "Month invalid.");
-            if (claim.Year is < 2000 or > 2100) ModelState.AddModelError("Year", "Invalid year.");
-            if (claim.HoursWorked <= 0) ModelState.AddModelError("HoursWorked", "Hours must be > 0.");
+            // Only lecturers  submit claims
+            if (HttpContext.Session.GetString("Role") != "Lecturer")
+                return RedirectToAction("Denied", "Account");
+
+            var lecturerId = HttpContext.Session.GetInt32("LecturerID");
+            if (lecturerId == null)
+                return RedirectToAction("Login", "Account");
+
+            var lecturer = await _db.Lecturers.FindAsync(lecturerId.Value);
+            if (lecturer == null)
+                return RedirectToAction("Login", "Account");
+
+            // Force claim to belong to the logged-in lecturer
+            claim.LecturerID = lecturer.LecturerID;
+
+            // ========= VALIDATION =========
+            if (claim.Month is < 1 or > 12)
+                ModelState.AddModelError("Month", "Month invalid.");
+
+            if (claim.Year is < 2000 or > 2100)
+                ModelState.AddModelError("Year", "Invalid year.");
+
+            if (claim.HoursWorked <= 0)
+                ModelState.AddModelError("HoursWorked", "Hours must be > 0.");
+
+            if (claim.HoursWorked > 180)
+                ModelState.AddModelError("HoursWorked", "hours must be < 180 a month.");
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Lecturers = _db.Lecturers.OrderBy(l => l.FirstName).ToList();
+                ViewBag.Lecturer = lecturer;
                 return View(claim);
             }
 
-            // Store the lecturer's rate at time of claim
-            claim.HourlyRate = lecturer!.HourlyRate;
+            // hourly rate from lecturer record
+            claim.HourlyRate = lecturer.HourlyRate;        
             claim.Status = ClaimStatus.Pending;
 
+            // save claim to get ClaimID
             _db.Claims.Add(claim);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync();          
 
-            // Optional upload
+            // file upload handling
             if (upload != null && upload.Length > 0)
             {
                 var allowed = new[] { ".pdf", ".docx", ".xlsx" };
                 var ext = Path.GetExtension(upload.FileName).ToLowerInvariant();
-                var maxBytes = 5 * 1024 * 1024;
+                var maxBytes = 5 * 1024 * 1024; // this is 5mb 
 
                 if (!allowed.Contains(ext))
+                {
                     TempData["UploadError"] = "Invalid file type.";
+                }
                 else if (upload.Length > maxBytes)
-                    TempData["UploadError"] = "File > 5 MB.";
+                {
+                    TempData["UploadError"] = "File size must be < 5 MB.";
+                }
                 else
                 {
+                    // save the file
                     try
                     {
                         var root = Path.Combine(_env.WebRootPath ?? "wwwroot", "uploads");
                         Directory.CreateDirectory(root);
+
                         var saved = $"{Guid.NewGuid()}{ext}";
                         var path = Path.Combine(root, saved);
-                        using var fs = new FileStream(path, FileMode.Create);
-                        await upload.CopyToAsync(fs);
+
+                        using (var fs = new FileStream(path, FileMode.Create))
+                        {
+                            await upload.CopyToAsync(fs);
+                        }
 
                         _db.SupportingDocuments.Add(new SupportingDocument
                         {
@@ -74,11 +126,12 @@ namespace CMCS.Controllers
                             FileName = upload.FileName,
                             FileUrl = $"/uploads/{saved}"
                         });
+
                         await _db.SaveChangesAsync();
                     }
                     catch
                     {
-                        TempData["UploadError"] = "Upload failed.";
+                        TempData["UploadError"] = "Upload failed. Please try again.";
                     }
                 }
             }
@@ -86,7 +139,6 @@ namespace CMCS.Controllers
             TempData["Success"] = "Claim submitted successfully.";
             return RedirectToAction(nameof(Index));
         }
-
         //Claims
         public async Task<IActionResult> Index()
         {

@@ -1,0 +1,88 @@
+﻿@model CMCS.Models.UserAccountFormModel
+
+@{
+    ViewData["Title"] = "Create User (HR)";
+}
+
+<h2 class="mb-3">Create User Account</h2>
+
+<form asp-action="CreateUser" method="post" class="row g-3">
+    @Html.AntiForgeryToken()
+    <div class="col-12">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Username" class="form-label"></label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+        <small class="text-muted">For lecturers,can override.</small>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="Role" class="form-label"></label>
+        <select asp-for="Role" class="form-select">
+            <option value="HR">HR</option>
+            <option value="Lecturer">Lecturer</option>
+            <option value="Coordinator">Coordinator</option>
+            <option value="Manager">Manager</option>
+        </select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <hr />
+        <h5>Lecturer Details (only if Role = Lecturer)</h5>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="StaffNo" class="form-label"></label>
+        <input asp-for="StaffNo" class="form-control" />
+        <span asp-validation-for="StaffNo" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="LecturerFirstName" class="form-label">First Name</label>
+        <input asp-for="LecturerFirstName" class="form-control" />
+        <span asp-validation-for="LecturerFirstName" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="LecturerLastName" class="form-label">Last Name</label>
+        <input asp-for="LecturerLastName" class="form-control" />
+        <span asp-validation-for="LecturerLastName" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="LecturerEmail" class="form-label">Email</label>
+        <input asp-for="LecturerEmail" class="form-control" />
+        <span asp-validation-for="LecturerEmail" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="HourlyRate" class="form-label"></label>
+        <input asp-for="HourlyRate" class="form-control" />
+        <span asp-validation-for="HourlyRate" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,48 @@
+﻿@model IEnumerable<CMCS.Models.UserAccount>
+
+@{
+    ViewData["Title"] = "HR - User Management";
+}
+
+<h2 class="mb-3">User Management (HR)</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+<div class="mb-3 d-flex gap-2">
+    <a asp-action="CreateUser" class="btn btn-primary">Create New User</a>
+    <a asp-action="Reports" class="btn btn-outline-secondary">View Reports</a>
+</div>
+
+<div class="mb-3">
+    <a asp-action="CreateUser" class="btn btn-primary">Create New User</a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Role</th>
+            <th>Lecturer</th>
+            <th>Hourly Rate</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Username</td>
+                <td>@u.FullName</td>
+                <td>@u.Role</td>
+                <td>@(u.Lecturer != null ? u.Lecturer.FirstName + " " + u.Lecturer.LastName : "-")</td>
+                <td>@(u.Lecturer != null ? u.Lecturer.HourlyRate.ToString("F2") : "-")</td>
+                <td>
+                    <a asp-action="EditUser" asp-route-id="@u.UserAccountID" class="btn btn-sm btn-outline-secondary">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
